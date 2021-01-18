@@ -1,0 +1,25 @@
+//I pledge my honor I have abided by the Stevens Honor System
+//Rafael Sanchez
+//Description: The time complexities of each sorting
+
+Firstnames
+
+Name of Sort             Wallclock Time              Best time Complexity           Worst time complexity
+
+Selection                   15246                          n^2                               n^2
+Insertion                   89367                          n                                 n^2
+Bubble                      12376                          n                                 n^2
+Shell                       10256                         nlogn                           n(logn)^2
+Merge                       9389                          nlogn                           nlogn
+Quick                       23216                         nlogn                              n^2
+
+Dates
+
+Name of Sort             Wallclock Time              Best time Complexity           Worst time complexity
+
+Selection                   2393                         n^2                               n^2
+Insertion                   1648                         n                                 n^2
+Bubble                      2384                         n                                 n^2
+Shell                       1894                         nlogn                           n(logn)^2
+Merge                       184                          nlogn                            nlogn
+Quick                       4203                         nlogn                              n^2

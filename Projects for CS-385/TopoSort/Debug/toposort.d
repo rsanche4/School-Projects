@@ -1,0 +1,1 @@
+toposort.o: ../toposort.cpp
