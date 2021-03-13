@@ -1,8 +1,8 @@
 /*
  * main.h
  *
- *  
- * Author: @rsanche4
+ *  Created on: Mar 6, 2021
+ *      Author: user
  */
 
 #ifndef MAIN_H_

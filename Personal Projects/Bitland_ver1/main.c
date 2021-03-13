@@ -1,7 +1,7 @@
 /*
  * BITLAND
  * CREATED BY @RSANCHE4
- * 
+ * Here you will find the code for the game.
  *
  */
 #include <stdio.h>
@@ -16,7 +16,7 @@
 //Constants
 #define WID 20
 #define HEI 50
-#define ENCOUNTER 200
+#define ENCOUNTER 250
 
 //Global variables
 //When the game is over, it will be 1.
@@ -210,7 +210,7 @@ void load_maze() {
 
 //Should check if our level is a town or a maze. This will be run again and again to initialize the level.
 void game_init() {
-	
+
 	if (level % 5 == 0) {
 		load_town();
 	} else {
@@ -577,10 +577,10 @@ void menu() {
 int main() {
 	//Init the stats
 	hp = 10;
-	
+
 	maxhp = 10;
 	food = 0;
-	
+
 	atk = 5;
 	level = 0;
 	menu();
@@ -589,7 +589,7 @@ int main() {
 	int esc_value = 27;
 	int enter_value = 10;
 	int game_started = 0;
-	
+
 	while (read(STDIN_FILENO, &c, 1) == 1 && c != esc_value) {
 		if (c == enter_value && !game_started) {
 			game_started = 1;

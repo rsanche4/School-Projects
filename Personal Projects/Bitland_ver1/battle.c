@@ -1,8 +1,9 @@
 /*
  * battle.c
  *
- *  
+ *
  * Author: @rsanche4
+ * Battle.c runs when we encounter an enemy.
  */
 #include <stdbool.h>
 #include <stdio.h>
@@ -98,31 +99,31 @@ void turns(int player_turn, int enem_hp, int enem_atk) {
 			char *filename;
 			if (level < 5) {
 				filename = "cute_spider.txt";
-				} else if (level > 5 && level < 10) {
-					filename = "timid_mouse.txt";
-				} else if (level > 10 && level < 15) {
-					filename = "big_scorpion.txt";
-				} else if (level > 15 && level < 20) {
-					filename = "angry_bat.txt";
-				} else if (level > 20 && level < 25) {
-					filename = "hungry_bear.txt";
-				} else if (level > 25 && level < 30) {
-					filename = "lone_wolf.txt";
-				} else if (level > 30 && level < 35) {
-					filename = "giant_roach.txt";
-				} else if (level > 35 && level < 40) {
-					filename = "dead_walker.txt";
-				} else if (level > 40 && level < 45) {
-					filename = "lost_soul.txt";
-				} else if (level > 45 && level < 50) {
-					filename = "pretty_fairy.txt";
-				} else if (level > 50 && level < 55) {
-					filename = "poor_devil.txt";
-				} else if (level > 55 && level < 60) {
-					filename = "creepy_cyclop.txt";
-				} else if (level > 60) {
-					filename = "grim_reaper.txt";
-				}
+			} else if (level > 5 && level < 10) {
+				filename = "timid_mouse.txt";
+			} else if (level > 10 && level < 15) {
+				filename = "big_scorpion.txt";
+			} else if (level > 15 && level < 20) {
+				filename = "angry_bat.txt";
+			} else if (level > 20 && level < 25) {
+				filename = "hungry_bear.txt";
+			} else if (level > 25 && level < 30) {
+				filename = "lone_wolf.txt";
+			} else if (level > 30 && level < 35) {
+				filename = "giant_roach.txt";
+			} else if (level > 35 && level < 40) {
+				filename = "dead_walker.txt";
+			} else if (level > 40 && level < 45) {
+				filename = "lost_soul.txt";
+			} else if (level > 45 && level < 50) {
+				filename = "pretty_fairy.txt";
+			} else if (level > 50 && level < 55) {
+				filename = "poor_devil.txt";
+			} else if (level > 55 && level < 60) {
+				filename = "creepy_cyclop.txt";
+			} else if (level > 60) {
+				filename = "grim_reaper.txt";
+			}
 			FILE *fptr = NULL;
 			if((fptr = fopen(filename,"r")) == NULL)
 			{
@@ -146,14 +147,14 @@ void turns(int player_turn, int enem_hp, int enem_atk) {
 				int attack = rand() % atk;
 				enem_hp = enem_hp - attack;
 				system("clear");
-				//sleep(2);
+
 				printf("You dealt %d damage to the enemy!\n", attack);
 				sleep(2);
 				if (enem_hp <= 0) {
-					//sleep(2);
+
 					printf("The enemy lost and ran away...\n");
 					sleep(2);
-					//atk++; //When we beat the enemy, increase our attack value by 1
+
 					turn_result = 0;
 					if (level > 60) {
 						turn_result = 2;
@@ -181,32 +182,32 @@ void turns(int player_turn, int enem_hp, int enem_atk) {
 
 			char *filename;
 			if (level < 5) {
-							filename = "cute_spider.txt";
-							} else if (level > 5 && level < 10) {
-								filename = "timid_mouse.txt";
-							} else if (level > 10 && level < 15) {
-								filename = "big_scorpion.txt";
-							} else if (level > 15 && level < 20) {
-								filename = "angry_bat.txt";
-							} else if (level > 20 && level < 25) {
-								filename = "hungry_bear.txt";
-							} else if (level > 25 && level < 30) {
-								filename = "lone_wolf.txt";
-							} else if (level > 30 && level < 35) {
-								filename = "giant_roach.txt";
-							} else if (level > 35 && level < 40) {
-								filename = "dead_walker.txt";
-							} else if (level > 40 && level < 45) {
-								filename = "lost_soul.txt";
-							} else if (level > 45 && level < 50) {
-								filename = "pretty_fairy.txt";
-							} else if (level > 50 && level < 55) {
-								filename = "poor_devil.txt";
-							} else if (level > 55 && level < 60) {
-								filename = "creepy_cyclop.txt";
-							} else if (level > 60) {
-								filename = "grim_reaper.txt";
-							}
+				filename = "cute_spider.txt";
+			} else if (level > 5 && level < 10) {
+				filename = "timid_mouse.txt";
+			} else if (level > 10 && level < 15) {
+				filename = "big_scorpion.txt";
+			} else if (level > 15 && level < 20) {
+				filename = "angry_bat.txt";
+			} else if (level > 20 && level < 25) {
+				filename = "hungry_bear.txt";
+			} else if (level > 25 && level < 30) {
+				filename = "lone_wolf.txt";
+			} else if (level > 30 && level < 35) {
+				filename = "giant_roach.txt";
+			} else if (level > 35 && level < 40) {
+				filename = "dead_walker.txt";
+			} else if (level > 40 && level < 45) {
+				filename = "lost_soul.txt";
+			} else if (level > 45 && level < 50) {
+				filename = "pretty_fairy.txt";
+			} else if (level > 50 && level < 55) {
+				filename = "poor_devil.txt";
+			} else if (level > 55 && level < 60) {
+				filename = "creepy_cyclop.txt";
+			} else if (level > 60) {
+				filename = "grim_reaper.txt";
+			}
 			FILE *fptr = NULL;
 			if((fptr = fopen(filename,"r")) == NULL)
 			{
