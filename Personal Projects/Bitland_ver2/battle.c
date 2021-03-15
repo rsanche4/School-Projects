@@ -21,32 +21,32 @@
 int turn_result = 0;
 
 //Here I am defining all the enemies stats
-const int cute_spider_hp = 2;
-const int cute_spider_atk = 2;
-const int timid_mouse_hp = 5;
-const int timid_mouse_atk = 3;
-const int big_scorpion_hp = 10;
-const int big_scorpion_atk = 7;
-const int angry_bat_hp = 15;
-const int angry_bat_atk = 9;
-const int hungry_bear_hp = 20;
-const int hungry_bear_atk = 13;
-const int lone_wolf_hp = 25;
-const int lone_wolf_atk = 15;
-const int giant_roach_hp = 30;
-const int giant_roach_atk = 17;
-const int dead_walker_hp = 35;
-const int dead_walker_atk = 19;
-const int lost_soul_hp = 40;
-const int lost_soul_atk = 23;
+const int cute_spider_hp = 9;
+const int cute_spider_atk = 4;
+const int timid_mouse_hp = 13;
+const int timid_mouse_atk = 8;
+const int big_scorpion_hp = 17;
+const int big_scorpion_atk = 12;
+const int angry_bat_hp = 21;
+const int angry_bat_atk = 16;
+const int hungry_bear_hp = 25;
+const int hungry_bear_atk = 20;
+const int lone_wolf_hp = 29;
+const int lone_wolf_atk = 24;
+const int giant_roach_hp = 33;
+const int giant_roach_atk = 28;
+const int dead_walker_hp = 37;
+const int dead_walker_atk = 32;
+const int lost_soul_hp = 41;
+const int lost_soul_atk = 36;
 const int pretty_fairy_hp = 45;
-const int pretty_fairy_atk = 25;
-const int poor_devil_hp = 50;
-const int poor_devil_atk = 27;
-const int creepy_cyclop_hp = 55;
-const int creepy_cyclop_atk = 30;
-const int grim_reaper_hp = 65;
-const int grim_reaper_atk = 40;
+const int pretty_fairy_atk = 40;
+const int poor_devil_hp = 49;
+const int poor_devil_atk = 44;
+const int creepy_cyclop_hp = 53;
+const int creepy_cyclop_atk = 48;
+const int grim_reaper_hp = 60;
+const int grim_reaper_atk = 50;
 
 
 void enem_desc() {

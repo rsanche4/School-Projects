@@ -54,7 +54,7 @@ void game_won() {
 	printf("#############################################\n");
 	printf("#############################################\n");
 	printf("#############################################\n");
-	printf("HP:0/%d | ATK:%d | FOOD:%d | LEVEL:%d\n", maxhp, atk, food, level);
+	printf("HP:%d/%d | ATK:%d | FOOD:%d | LEVEL:%d\n", hp, maxhp, atk, food, level);
 	game_is_done = 1;
 }
 
@@ -577,10 +577,8 @@ void menu() {
 int main() {
 	//Init the stats
 	hp = 10;
-
 	maxhp = 10;
 	food = 0;
-
 	atk = 5;
 	level = 0;
 	menu();
