@@ -314,9 +314,9 @@ void redraw(char c) {
 			display();
 		}
 		//This will make sure to move us up a level if we did in fact find the asterisk
-		if ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
+		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
 				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5])) {
+				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
 			level += 1;
 			maxhp += 1;
 			hp += 1;
@@ -378,9 +378,9 @@ void redraw(char c) {
 		}
 
 		//This will make sure to move us up a level if we did in fact find the asterisk
-		if ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
+		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
 				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5])) {
+				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
 			level += 1;
 			maxhp += 1;
 			hp += 1;
@@ -440,9 +440,9 @@ void redraw(char c) {
 		}
 
 		//This will make sure to move us up a level if we did in fact find the asterisk
-		if ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
+		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
 				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5])) {
+				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
 			level += 1;
 			maxhp += 1;
 			hp += 1;
@@ -501,9 +501,9 @@ void redraw(char c) {
 		}
 
 		//This will make sure to move us up a level if we did in fact find the asterisk
-		if ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
+		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
 				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5])) {
+				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
 			level += 1;
 			maxhp += 1;
 			hp += 1;
