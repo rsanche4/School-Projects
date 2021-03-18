@@ -236,6 +236,96 @@ int food_in_range(int a, int b, int playeri, int playerj) {
 	return 0;
 }
 
+//Here I am just copying over the keys into one function that will do most of the work
+void redraw_helper(int a, int b) {
+		//First find the player in the plane
+		int playeri = 0;
+		int playerj = 0;
+		for (int i = 0; i < WID; i++) {
+			for (int j = 0; j < HEI; j++) {
+				if (plane[i][j] == '@') {
+					playeri = i;
+					playerj = j;
+				}
+			}
+		}
+		//find the food position
+		int foodi = 0;
+		int foodj = 0;
+		for (int i = 0; i < WID; i++) {
+			for (int j = 0; j < HEI; j++) {
+				if (plane[i][j] == '&') {
+					foodi = i;
+					foodj = j;
+				}
+			}
+		}
+
+		//Then check that next up isn't a boundary
+		if (plane[playeri+a][playerj+b] != '#') {
+			plane[playeri][playerj] = '.';
+			plane[playeri+a][playerj+b] = '@';
+			display();
+		}
+		//Did we find food? Show it.
+		if (food_in_range(a*4, b*4, playeri, playerj) && !food_found) {
+			plane[playeri+(a*4)][playerj+(b*4)] = '&';
+			food_found = 1;
+			display();
+		}
+		if (food_in_range(a*3, b*3, playeri, playerj) && !food_found) {
+			plane[playeri+(a*3)][playerj+(b*3)] = '&';
+			food_found = 1;
+			display();
+		}
+		if (food_in_range(a*2, b*2, playeri, playerj) && !food_found) {
+			plane[playeri+(a*2)][playerj+(b*2)] = '&';
+			food_found = 1;
+			display();
+		}
+		if (food_in_range(a, b, playeri, playerj) && !food_found) {
+			plane[playeri+(a)][playerj+(b)] = '&';
+			food_found = 1;
+			display();
+		}
+		//Did we just walk over one of the foods?
+		if (playeri+a == foodi && playerj+b == foodj) {
+			plane[playeri][playerj] = '.';
+			time_t t;
+			srand((unsigned) time(&t));
+			food += rand() % 7;
+			display();
+		}
+		//This will check that the asterisk hidden is not hidden anymore
+		if (lvlup_in_range(a*4, b*4, playeri, playerj) && !in_village) {
+			plane[playeri+(a*4)][playerj+(b*4)] = '*';
+			display();
+		}
+		if (lvlup_in_range(a*3, b*3, playeri, playerj) && !in_village) {
+			plane[playeri+(a*3)][playerj+(b*3)] = '*';
+			display();
+		}
+		if (lvlup_in_range(a*2, b*2, playeri, playerj) && !in_village) {
+			plane[playeri+(a*2)][playerj+(b*2)] = '*';
+			display();
+		}
+
+		//This will make sure to move us up a level if we did in fact find the asterisk
+		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
+				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
+				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
+			level += 1;
+			maxhp += 1;
+			hp += 1;
+			atk += 1;
+			game_init();
+		}
+		if (level % 5 == 0 && playeri == 2 && playerj == HEI/2) {
+			level += 1;
+			game_init();
+		}
+}
+
 void redraw(char c) {
 	int battle_result = 0;
 	if (!in_village) {
@@ -264,258 +354,16 @@ void redraw(char c) {
 	}
 
 	if (c == 'w') {
-		//First find the player in the plane
-		int playeri = 0;
-		int playerj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '@') {
-					playeri = i;
-					playerj = j;
-				}
-			}
-		}
-		//find the food position
-		int foodi = 0;
-		int foodj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '&') {
-					foodi = i;
-					foodj = j;
-				}
-			}
-		}
-
-		//Then check that next up isn't a boundary
-		if (plane[playeri-1][playerj] != '#') {
-			plane[playeri][playerj] = '.';
-			plane[playeri-1][playerj] = '@';
-			display();
-		}
-		//Did we find food? Show it.
-		if (food_in_range(-4, 0, playeri, playerj) && !food_found) {
-			plane[playeri-4][playerj] = '&';
-			food_found = 1;
-		}
-		//Did we just walk over one of the foods?
-		if (playeri-1 == foodi && playerj == foodj) {
-			plane[playeri][playerj] = '.';
-			time_t t;
-			srand((unsigned) time(&t));
-			food += rand() % 7;
-			display();
-		}
-
-
-		//This will check that the asterisk hidden is not hidden anymore
-		if (lvlup_in_range(-4, 0, playeri, playerj) && !in_village) {
-			plane[playeri-4][playerj] = '*';
-			display();
-		}
-		//This will make sure to move us up a level if we did in fact find the asterisk
-		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
-				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
-			level += 1;
-			maxhp += 1;
-			hp += 1;
-			atk += 1;
-			game_init();
-		}
-		if (level % 5 == 0 && playeri == 2 && playerj == HEI/2) {
-			level += 1;
-			game_init();
-		}
-
+		redraw_helper(-1, 0); //the numbers mean the values to look for. If we are looking up, then that's -1, 0.
 	}
 	if (c == 's') {
-		int playeri = 0;
-		int playerj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '@') {
-					playeri = i;
-					playerj = j;
-				}
-			}
-		}
-		//find the food position
-		int foodi = 0;
-		int foodj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '&') {
-					foodi = i;
-					foodj = j;
-				}
-			}
-		}
-		//Then check that next up isn't a boundary
-		if (plane[playeri+1][playerj] != '#') {
-			plane[playeri][playerj] = '.';
-			plane[playeri+1][playerj] = '@';
-			display();
-		}
-		//Did we find food? Show it.
-		if (food_in_range(4, 0, playeri, playerj) && !food_found) {
-			plane[playeri+4][playerj] = '&';
-			food_found = 1;
-		}
-		//Did we just walk over one of the foods?
-		if (playeri+1 == foodi && playerj == foodj) {
-			plane[playeri][playerj] = '.';
-			time_t t;
-			srand((unsigned) time(&t));
-			food += rand() % 7;
-			display();
-		}
-
-		//This will check that the asterisk hidden is not hidden anymore
-		if (lvlup_in_range(4, 0, playeri, playerj) && !in_village) {
-			plane[playeri+4][playerj] = '*';
-			display();
-		}
-
-		//This will make sure to move us up a level if we did in fact find the asterisk
-		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
-				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
-			level += 1;
-			maxhp += 1;
-			hp += 1;
-			atk += 1;
-			game_init();
-		}
-		if (level % 5 == 0 && playeri == 2 && playerj == HEI/2) {
-			level += 1;
-			game_init();
-		}
+		redraw_helper(1, 0);
 	}
 	if (c == 'a') {
-		int playeri = 0;
-		int playerj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '@') {
-					playeri = i;
-					playerj = j;
-				}
-			}
-		}
-		//find the food position
-		int foodi = 0;
-		int foodj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '&') {
-					foodi = i;
-					foodj = j;
-				}
-			}
-		}
-		//Then check that next up isn't a boundary
-		if (plane[playeri][playerj-1] != '#') {
-			plane[playeri][playerj] = '.';
-			plane[playeri][playerj-1] = '@';
-			display();
-		}
-		//Did we find food? Show it.
-		if (food_in_range(0, -4, playeri, playerj) && !food_found) {
-			plane[playeri][playerj-4] = '&';
-			food_found = 1;
-		}
-		//Did we just walk over one of the foods?
-		if (playeri == foodi && playerj-1 == foodj) {
-			plane[playeri][playerj] = '.';
-			time_t t;
-			srand((unsigned) time(&t));
-			food += rand() % 7;
-			display();
-		}
-		//This will check that the asterisk hidden is not hidden anymore
-		if (lvlup_in_range(0, -4, playeri, playerj) && !in_village) {
-			plane[playeri][playerj-4] = '*';
-			display();
-		}
-
-		//This will make sure to move us up a level if we did in fact find the asterisk
-		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
-				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
-			level += 1;
-			maxhp += 1;
-			hp += 1;
-			atk += 1;
-			game_init();
-		}
-		if (level % 5 == 0 && playeri == 2 && playerj == HEI/2) {
-			level += 1;
-			game_init();
-		}
+		redraw_helper(0, -1);
 	}
 	if (c == 'd') {
-		int playeri = 0;
-		int playerj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '@') {
-					playeri = i;
-					playerj = j;
-				}
-			}
-		}
-		//find the food position
-		int foodi = 0;
-		int foodj = 0;
-		for (int i = 0; i < WID; i++) {
-			for (int j = 0; j < HEI; j++) {
-				if (plane[i][j] == '&') {
-					foodi = i;
-					foodj = j;
-				}
-			}
-		}
-		//Then check that next up isn't a boundary
-		if (plane[playeri][playerj+1] != '#') {
-			plane[playeri][playerj] = '.';
-			plane[playeri][playerj+1] = '@';
-			display();
-		}
-		//Did we find food? Show it.
-		if (food_in_range(0, 4, playeri, playerj) && !food_found) {
-			plane[playeri][playerj+4] = '&';
-			food_found = 1;
-		}
-		//Did we just walk over one of the foods?
-		if (playeri == foodi && playerj+1 == foodj) {
-			plane[playeri][playerj] = '.';
-			time_t t;
-			srand((unsigned) time(&t));
-			food += rand() % 7;
-			display();
-		}
-		if (lvlup_in_range(0, 4, playeri, playerj) && !in_village) {
-			plane[playeri][playerj+4] = '*';
-			display();
-		}
-
-		//This will make sure to move us up a level if we did in fact find the asterisk
-		if (!in_village && ((playeri == array_of_coord[0] && playerj == array_of_coord[1]) ||
-				(playeri == array_of_coord[2] && playerj == array_of_coord[3]) ||
-				(playeri == array_of_coord[4] && playerj == array_of_coord[5]))) {
-			level += 1;
-			maxhp += 1;
-			hp += 1;
-			atk += 1;
-			game_init();
-		}
-
-		if (level % 5 == 0 && playeri == 2 && playerj == HEI/2) {
-			level += 1;
-			game_init();
-		}
-
+		redraw_helper(0, 1);
 	}
 	if (c == 'e' && food > 0 && hp != maxhp) {
 		//If player wants to eat, then increase hp by a random value between 1 and 3
@@ -524,8 +372,6 @@ void redraw(char c) {
 		display();
 	}
 }
-
-
 
 //Main Menu Prompt. This checks as well if the player pressed Enter and if they did, we start the game.
 void menu() {
