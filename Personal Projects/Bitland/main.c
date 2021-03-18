@@ -283,11 +283,7 @@ void redraw_helper(int a, int b) {
 			food_found = 1;
 			display();
 		}
-		if (food_in_range(a, b, playeri, playerj) && !food_found) {
-			plane[playeri+(a)][playerj+(b)] = '&';
-			food_found = 1;
-			display();
-		}
+	
 		//Did we just walk over one of the foods?
 		if (playeri+a == foodi && playerj+b == foodj) {
 			plane[playeri][playerj] = '.';
