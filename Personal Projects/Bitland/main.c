@@ -100,7 +100,21 @@ void display() {
 	printf("HP:%d/%d      ATK:%d       FOOD:%d       LEVEL:%d\n", hp, maxhp, atk, food, level);
 	for (int i = 0; i < WID; i++) {
 		for (int j = 0; j < HEI; j++) {
-			printf("%c", plane[i][j]);
+			if (plane[i][j] == '@') {
+				printf("\033[0;32m");
+				printf("%c", plane[i][j]);
+				printf("\033[0;37m");
+			} else if (plane[i][j] == '&') {
+				printf("\033[0;33m");
+				printf("%c", plane[i][j]);
+				printf("\033[0;37m");
+			} else if (plane[i][j] == '*') {
+				printf("\033[0;31m");
+				printf("%c", plane[i][j]);
+				printf("\033[0;37m");
+			} else {
+				printf("%c", plane[i][j]);
+			}
 			if (j == HEI-1) {
 				printf("\n");
 			}
@@ -385,28 +399,36 @@ void menu() {
 				for (int k = 0; k < 21; k++) {
 					putchar(' ');
 				}
+				printf("\033[0;33m");
 				printf("BITLAND");
+				printf("\033[0;37m");
 				title_count = 1;
 			}
 			if (i == 11 && !start_count) {
 				for (int k = 0; k < 15; k++) {
 					putchar(' ');
 				}
+				printf("\033[0;33m");
 				printf("PRESS ENTER TO START");
+				printf("\033[0;37m");
 				start_count = 1;
 			}
 			if (i == 13 && !exit_count) {
 				for (int k = 0; k < 16; k++) {
 					putchar(' ');
 				}
+				printf("\033[0;33m");
 				printf("PRESS ESC TO EXIT");
+				printf("\033[0;37m");
 				exit_count = 1;
 			}
 			if (i == 15 && !dev_count) {
 				for (int k = 0; k < 20; k++) {
 					putchar(' ');
 				}
+				printf("\033[0;33m");
 				printf("@rsanche4");
+				printf("\033[0;37m");
 				dev_count = 1;
 			}
 			if (j == HEI-1) {
