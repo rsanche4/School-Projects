@@ -376,7 +376,7 @@ void redraw(char c) {
 		redraw_helper(0, 1);
 	}
 	if (c == 'e' && food > 0 && hp != maxhp) {
-		//If player wants to eat, then increase hp by a random value between 1 and 3
+		//If player wants to eat, then max out the hp
 		food--;
 		hp = maxhp;
 		display();
