@@ -1,0 +1,27 @@
+#/*********************************************************************************** 
+# * Name        : mtsummary.c
+# * Author      : Sydney Cardy and Rafael Sanchez
+# * Date        : 16 April 2021
+# * Pledge      : I pledge my honor that I have abided by the Stevens Honor System.
+# **********************************************************************************/
+
+./mtsieve -s100 -e200000000 -t1 : 0m14.100s
+./mtsieve -s100 -e200000000 -t2 : 0m8.977s
+./mtsieve -s100 -e200000000 -t3 : 0m8.837s
+./mtsieve -s100 -e200000000 -t4 : 0m8.916s
+
+My CPU is Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+
+No, it doesn't scale linearly.
+
+It doesn't really continue to improve.
+It just stays close to a value.
+It's a big improvement from -t1, but
+from -t2 to -t4, it stayed at a certain value.
+This reminds me of the Law of Diminshing returns.
+"Economic law stating that if one input in the 
+production of a commodity is increased while all
+other inputs are held fixed, a point will eventually
+be reached at which additions of the input yield
+progressively smaller, or diminishing, increases in output."
+Cited from Britannica.com
