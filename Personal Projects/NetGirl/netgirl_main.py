@@ -24,7 +24,7 @@ WORD_COUNT = 35
 
 # Range of time between tweets in seconds
 MIN_TIME = 60
-MAX_TIME = 3600
+MAX_TIME = 7200
 
 # Corpus extracted from the book "Fundamentals of computer organization and architecture"
 corpus = '''
