@@ -150,7 +150,7 @@ the CPU. For example, the program counter (PC) is a special-purpose register
 that is used to hold the address of the instruction to be executed next. Another
 example of special-purpose registers is the instruction register (IR), which is
 used to hold the instruction that is currently executed. The ALU provides the circuitry needed to perform the arithmetic, logical and shift operations demanded of
-the instruction set. In Chapter 4, we have covered a number of arithmetic operations and circuits used to support computation in an ALU. The control unit is
+the instruction set. The control unit is
 the entity responsible for fetching the instruction to be executed from the main
 memory and decoding and then executing it.
 The CPU fetches instructions from memory, reads and writes data from and to
