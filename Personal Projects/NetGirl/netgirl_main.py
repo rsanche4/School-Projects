@@ -42,4 +42,5 @@ while True:
     sleep_time = random.randint(MIN_TIME, MAX_TIME)
     current_time = datetime.datetime.now()
     print("Latest Status Update: " + str(current_time) + ". Time before next tweet: " + convert(sleep_time) + ".\nNetgirl said: '" + msg + "'")
+    print("***")
     time.sleep(sleep_time)
