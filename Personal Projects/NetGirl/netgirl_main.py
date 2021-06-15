@@ -22,7 +22,7 @@ api = tweepy.API(auth)
 MIN_TIME = 60
 MAX_TIME = 7200
 
-with open("C:/Users/rafas/Documents/stuff_on_github/All Projects/Personal Projects/NetGirl/corpus.txt", encoding="utf-8") as f:
+with open("corpus.txt", encoding="utf-8") as f:
     text = f.read()
 
 # Source: https://www.geeksforgeeks.org/python-program-to-convert-seconds-into-hours-minutes-and-seconds/
@@ -37,7 +37,7 @@ def convert(seconds):
 
 while True:
     # Likes messages regarding computers and/or universe and/or Lain Iwakura
-    hashtags = "#lain #lainiwakura #serialexperimentslain #シリアルエクスペリメンツレイン #岩倉玲音" + " #computer #technology #pc #tech #gaming #laptop #computerscience #software #programming" + " #pcgaming #windows #coding #computers #gamer #apple #programmer #code" + " #developer #python #java #game #internet" + " #javascript #coder #gamingpc #linux #computerrepair #komputer #electronics #cybersecurity" + " #engineering #hardware #pcgamer #hp #android #hacker #intel #pcbuild #html" + " #hacking #lenovo #notebook #gamingsetup #pcmasterrace #setup #microsoft" + " #computer #technology #pc #tech #gaming #laptop #computerscience #software #programming #pcgaming"
+    hashtags = "#lain #Lain #lainiwakura #LainIwakura #serialexperimentslain #SerialExperimentsLain #シリアルエクスペリメンツレイン #岩倉玲音" + "#lain #Lain #lainiwakura #LainIwakura #serialexperimentslain #SerialExperimentsLain #シリアルエクスペリメンツレイン #岩倉玲音" + "#lain #Lain #lainiwakura #LainIwakura #serialexperimentslain #SerialExperimentsLain #シリアルエクスペリメンツレイン #岩倉玲音" + "#lain #Lain #lainiwakura #LainIwakura #serialexperimentslain #SerialExperimentsLain #シリアルエクスペリメンツレイン #岩倉玲音" + " #computer #technology #pc #tech #gaming #laptop #computerscience #software #programming" + " #pcgaming #windows #coding #computers #gamer #apple #programmer #code" + " #developer #python #java #game #internet" + " #javascript #coder #gamingpc #linux #computerrepair #komputer #electronics #cybersecurity" + " #engineering #hardware #pcgamer #hp #android #hacker #intel #pcbuild #html" + " #hacking #lenovo #notebook #gamingsetup #pcmasterrace #setup #microsoft" + " #computer #technology #pc #tech #gaming #laptop #computerscience #software #programming #pcgaming"
     hash_list = hashtags.split(' ')
     tag_to_search = hash_list[random.randint(0, len(hash_list)-1)]
     tweets = api.search(tag_to_search)
