@@ -9,10 +9,10 @@ import random
 import datetime
 import markovify
 
-CONSUMER_KEY = "REMOVED FOR SAFETY"
-CONSUMER_SECRET = "REMOVED FOR SAFETY"
-ACCESS_KEY = "REMOVED FOR SAFETY"
-ACCESS_SECRET = "REMOVED FOR SAFETY"
+CONSUMER_KEY = ""
+CONSUMER_SECRET = ""
+ACCESS_KEY = ""
+ACCESS_SECRET = ""
 
 #This initializes everything
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -36,11 +36,59 @@ def convert(seconds):
     return "%d:%02d:%02d" % (hour, minutes, seconds)
 
 while True:
+    # Likes messages regarding computers and/or universe and/or Lain Iwakura
+    hashtags = "#lain #lainiwakura #serialexperimentslain #シリアルエクスペリメンツレイン #岩倉玲音" + " #computer #technology #pc #tech #gaming #laptop #computerscience #software #programming" + " #pcgaming #windows #coding #computers #gamer #apple #programmer #code" + " #developer #python #java #game #internet" + " #javascript #coder #gamingpc #linux #computerrepair #komputer #electronics #cybersecurity" + " #engineering #hardware #pcgamer #hp #android #hacker #intel #pcbuild #html" + " #hacking #lenovo #notebook #gamingsetup #pcmasterrace #setup #microsoft" + " #computer #technology #pc #tech #gaming #laptop #computerscience #software #programming #pcgaming"
+    hash_list = hashtags.split(' ')
+    tag_to_search = hash_list[random.randint(0, len(hash_list)-1)]
+    tweets = api.search(tag_to_search)
+    chosen_tweet_index = random.randint(0, len(tweets)-1)
+    if tweets[chosen_tweet_index] not in api.favorites("nettogirl"):
+        api.create_favorite(tweets[chosen_tweet_index].id)
+        print("Tweet liked: " + tweets[chosen_tweet_index].text)
+
+    # Likes messages that mentioned her
+    mentions = api.mentions_timeline()
+    are_mentions = False
+    print("Mentions liked:")
+    for mention in mentions:
+        if mention not in api.favorites("nettogirl"):
+            api.create_favorite(mention.id)
+            are_mentions = True
+            print(mention.text)
+    if not are_mentions:
+        print("None")
+
+    # Follow people back
+    new_followers = False
+    print("People followed back: ")
+    for follower in api.followers():
+        friendship = api.show_friendship(source_screen_name = "nettogirl", target_screen_name = follower.screen_name)
+        if not friendship[0].following:
+            new_followers = True
+            follower.follow()
+            print(follower.screen_name)
+    if not new_followers:
+        print("None")
+
+    # Unfollow People
+    people_unfollowed = False
+    print("People unfollowed:")
+    for friend in api.friends():
+        friendship2 = api.show_friendship(source_screen_name = "nettogirl", target_screen_name = friend.screen_name)
+        if not friendship2[1].following:
+            people_unfollowed = True
+            api.destroy_friendship(friend.screen_name)
+            print(friend.screen_name)
+    if not people_unfollowed:
+        print("None")
+
+    # Generates the text
     text_model = markovify.Text(text)
     msg = text_model.make_short_sentence(random.randint(100, 280))
     api.update_status(msg)
     sleep_time = random.randint(MIN_TIME, MAX_TIME)
     current_time = datetime.datetime.now()
-    print("Latest Status Update: " + str(current_time) + ". Time before next tweet: " + convert(sleep_time) + ".\nNetgirl said: '" + msg + "'")
-    print("***")
+    print("Latest Status Update: " + str(current_time) + ".\nTime before next tweet: " + convert(sleep_time) + ".\nNetgirl said: '" + msg + "'")
+    print("*********************************************")
+    # Go to sleep
     time.sleep(sleep_time)
