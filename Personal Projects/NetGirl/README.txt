@@ -2,8 +2,7 @@
 Design and Code: Rafael Sanchez
 
 NetGirl is a Twitter Bot who posts random thoughts on machines and computer architecture.
-Due to privacy, I cannot upload the script I wrote for her without risking the sharing 
-secret keys. She was written using Tweepy and Markovify to learn from a corpus of data
+She was written using Tweepy and Markovify to learn from a corpus of data
 and generate sentences.
 
 She is a red haired girl who supposedly is on a state of delirium. The time of her posts
