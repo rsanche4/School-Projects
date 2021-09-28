@@ -172,6 +172,7 @@ while not done:
         game_over = False
         lif = 3
         scr = 0
+        init_scores = True
         mixer.Sound('enter.wav').play()
         music_number = random.randint(0,1)
         if music_number == 0: 
