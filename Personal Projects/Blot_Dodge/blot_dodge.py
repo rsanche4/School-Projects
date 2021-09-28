@@ -115,6 +115,12 @@ class Horizontals_1:
         elif self.direction != 0 and self.pos_x < -50:
             self.pos_x = WID+50
             self.pos_y = random.randint(50, HEI-30)
+    def restart(self):
+        if self.direction == 0:
+            self.pos_x = -50
+        else:
+            self.pos_x = WID+50
+            
 
 # -------- Main Program Loop -----------
 counter = 0
@@ -183,6 +189,16 @@ while not done:
             mixer.music.load("water.wav")
             mixer.music.set_volume(0.7)
             mixer.music.play(-1)
+        a_1.restart()
+        b_1.restart()
+        a_2.restart()
+        b_2.restart()
+        a_3.restart()
+        a_10.restart()
+        b_10.restart()
+        a_20.restart()
+        b_20.restart()
+        a_30.restart()
     if keys[K_ESCAPE]:
         done = True
         
