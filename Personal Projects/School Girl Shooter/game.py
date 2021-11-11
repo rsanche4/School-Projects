@@ -100,6 +100,9 @@ pack_reached_her = False
 dropHealth = False
 start_generation = True
 player_moving_dir = 0 # -1 for moving left, 0 for not moving, 1 for moving right
+game_state = 0 # 0 for Relaxing Phase, 1 for Build Up Phase, 2 for Climax Phase
+game_over = False
+out = ' '
 
 # The Sound Function, which plays all sounds in game. Call this to play sounds or music.
 def sound_master(soundFilePath, isMusic, onLoop):
@@ -165,7 +168,10 @@ class RZombie:
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
 
-    def update(self, shotLeft, shotRight, is_player_moving, min_damage, max_damage, spawn_offset):
+    def position(self):
+        return self.x
+
+    def update(self, shotLeft, shotRight, is_player_moving, min_damage, max_damage, spawn_offset, reachedLeftWall):
         #global kills
         #global off_screen_left
         #global off_screen_right
@@ -174,36 +180,42 @@ class RZombie:
         if not self.flipLeft and (self.x > WID//2 or (shotLeft and (self.x > 0))):
             if self.x > WID//2:
                 health -= random.randint(min_damage, max_damage)
+                if health < 0:
+                    health = 0
                 sound_master("Data\hurt.wav", False, False)
             #elif shotLeft:
             #    kills += 1
             self.x = spawn_offset
             if sound_to_play==0:
                 sound_master("Data\eww1.wav", False, False)
-            if sound_to_play==1:
+            elif sound_to_play==1:
                 sound_master("Data\eww2.wav", False, False)
-            if sound_to_play==2:
+            else:
                 sound_master("Data\eww3.wav", False, False)
         elif self.flipLeft and (self.x < WID//2 or (shotRight and (self.x < WID-20))):
             if self.x < WID//2:
                 health -= random.randint(min_damage, max_damage)
+                if health < 0:
+                    health = 0
                 sound_master("Data\hurt.wav", False, False)
             #elif shotRight:
             #    kills += 1
             self.x = spawn_offset
             if sound_to_play==0:
                 sound_master("Data\eww1.wav", False, False)
-            if sound_to_play==1:
+            elif sound_to_play==1:
                 sound_master("Data\eww2.wav", False, False)
-            if sound_to_play==2:
+            else:
                 sound_master("Data\eww3.wav", False, False)
         # is_player_moving = 0 for not moving, -1 for moving left, 1 for moving right
         if not self.flipLeft and is_player_moving==-1: # If we are moving to the right and player moving to the left
             self.x += self.vel+2
         elif not self.flipLeft and is_player_moving==1:
             self.x -= self.vel-2
-        elif self.flipLeft and is_player_moving==-1:
+        elif self.flipLeft and is_player_moving==-1 and not reachedLeftWall:
             self.x += self.vel-2
+        elif self.flipLeft and is_player_moving==-1 and reachedLeftWall:
+            self.x -= self.vel
         elif self.flipLeft and is_player_moving==1:
             self.x -= self.vel+2
         elif not self.flipLeft and is_player_moving==0:
@@ -245,15 +257,22 @@ class HealthPlus:
 # Initialize instances of classes or code using previous functions (Optional)
 P = Player(player_x, player_y)
 #Eye1 = RZombie(off_screen_left, player_y, 'Data\\eye.png', False, vel)
-Eye2 = RZombie(init_location_zombie_right, player_y, 'Data\\eyeLeft.png', True, vel)
-Eye3 = RZombie(init_location_zombie_right, player_y, 'Data\\eyeLeft.png', True, vel)
+Eye0 = RZombie(init_location_zombie_right, player_y, 'Data\\eyeLeft.png', True, vel)
+Eye1 = RZombie(init_location_zombie_right, player_y, 'Data\\handLeft.png', True, vel+0.3)
+Eye2 = RZombie(init_location_zombie_right, player_y, 'Data\\pinkLeft.png', True, vel+0.6)
+Eye3 = RZombie(init_location_zombie_right, player_y, 'Data\\maleLeft.png', True, vel+1)
+Eye4 = RZombie(init_location_zombie_right, player_y, 'Data\\eyeLeft.png', True, vel+1.3)
+Eye5 = RZombie(init_location_zombie_right, player_y, 'Data\\handLeft.png', True, vel+1.6)
+Eye6 = RZombie(init_location_zombie_right, player_y, 'Data\\pinkLeft.png', True, vel+2)
+#Eye7 = RZombie(init_location_zombie_left, player_y, 'Data\\eye.png', False, vel) # guy coming from behind
+#zombie_array = [Eye0, Eye1, Eye2, Eye3, Eye4, Eye5, Eye6, Eye7]
 #Pink1 = RZombie(off_screen, player_y, 'Data\\pink.png', False, 3)
 #Pink2 = RZombie(off_screen, player_y, 'Data\\pinkLeft.png', True, 4)
 #Hand1 = RZombie(off_screen, player_y, 'Data\\hand.png', False, 5)
 #Hand2 = RZombie(off_screen, player_y, 'Data\\handLeft.png', True, 6)
 #Male1 = RZombie(off_screen, player_y, 'Data\\male.png', False, 7)
 #Male2 = RZombie(off_screen, player_y, 'Data\\maleLeft.png', True, 8)
-H = HealthPlus(player_x, -10, 20, 40)
+H = HealthPlus(player_x, -10, 10, 20)
 sound_master('Data\\title.wav', True, True)
 # ------------------------------------------------- USEFUL -----------------------------------------------------------
 # ------------------------------------------------- GAME LOGIC & EVERYTHING ------------------------------------------
@@ -306,7 +325,7 @@ while not done:
         bg_rect.topleft = (0, 125)
         screen.blit(bg_img, bg_rect)
         P.update(spritePosX, player_y, sprite_str_g, False, False)
-    else:
+    elif not is_menu and not game_over:
         moving = False
         if keys[K_LEFT]:
             sprite_str_g = ['Data\\idle_girl_left_1.png', 'Data\\idle_girl_left_2.png', 'Data\\walk_girl_left_1.png', 'Data\\walk_girl_left_2.png', 'Data\\shootl.png']
@@ -333,7 +352,22 @@ while not done:
             canShootAgain = True
         
         P.update(spritePosX, player_y, sprite_str_g, moving, is_shooting)
-        Eye2.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, 20, 40, 1500)
+        if game_state == 0:
+            Eye0.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye1.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+        elif game_state == 1:
+            Eye0.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye1.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye2.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye3.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+        elif game_state == 2:
+            Eye0.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye1.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye2.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye3.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye4.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye5.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
+            Eye6.update((is_shooting and lookingLeft), (is_shooting and not lookingLeft), player_moving_dir, random.randint(1, 20), random.randint(21, 40), 1500, player_x==leftWall)
         # For these creatures, there should only be 1 creature coming from 1 side at a time
 
         if bullets == 0 and not reloading:
@@ -354,7 +388,14 @@ while not done:
         minutes=int(ticks/60000 % 24)
         out='{minutes:02d}  {seconds:02d}  {millis}'.format(minutes=minutes, millis=millis, seconds=seconds)
         
-        if seconds % 60 < 10 and start_generation and random.randint(0, 1600) % 1600 == 0:
+        if seconds % 60 < 10:
+            game_state = 0
+        elif seconds % 60 < 50:
+            game_state = 1
+        elif seconds % 60 < 60:
+            game_state = 2
+
+        if game_state==0 and start_generation and random.randint(0, 1600) % 1600 == 0:
             dropHealth = True
             start_generation = False
 
@@ -370,8 +411,11 @@ while not done:
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], "BULLETS  "+str(bullets), False, WHITE, False, 0, 0)
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], "HEALTH  "+str(health), False, WHITE, False, WID-220, 0)
         
-        #font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], "SCORE  "+ str(kills), False, WHITE, False, 0, HEI-40)
-        #font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], "PACKS FOUND  "+str(packs), False, WHITE, False, WID//3+120, HEI-40)
+        if health == 0:
+            game_over = True
+
+    elif game_over:
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[3], "TIME   " + out, False, RED, True, 0, 170)
 
     # This counter will help us manipulate the frames better
     counter += 1
