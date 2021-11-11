@@ -54,7 +54,7 @@ lif = 3
 
 # Set the width and height of the screen [width, height]
 size = (WID, HEI)
-screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+screen = pygame.display.set_mode(size)
  
 pygame.display.set_caption("BLOT-DODGE")
  
