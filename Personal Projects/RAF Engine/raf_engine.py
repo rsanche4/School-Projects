@@ -65,15 +65,24 @@ PLAYER_H = 60
 player_x = WID//2
 player_y = HEI//2
 
-# The Sound Function, which plays all sounds in game. Call this to play sounds or music.
+# The Sound Function, which plays all sounds in game. Call this to play sounds or music. Returns 0 on success for playing music, and a Sound if playing sounds.
 def sound_master(soundFilePath, isMusic, onLoop):
+    sound = 0
+    if not isMusic:
+        sound = mixer.Sound(soundFilePath)
     if isMusic:
         mixer.music.load(soundFilePath)
         mixer.music.set_volume(0.7)
         if onLoop:
             mixer.music.play(-1)
+        else:
+            mixer.music.play()
     else:
-        mixer.Sound(soundFilePath).play()
+        if onLoop:
+            sound.play(-1)
+        else:
+            sound.play()
+    return sound
 
 # Define useful functions for the game here
 def dummy_func():
