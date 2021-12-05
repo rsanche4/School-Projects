@@ -404,19 +404,18 @@ while not done:
         set_game_border((random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), WID, HEI, random.randint(5, 15))
         if counter % 100 == 0:
             rand = random.randint(1, 6)
-            match rand:
-                case 1:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'OBEY', False, WHITE, True, 0, 0)
-                case 2:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONFORM', False, WHITE, True, 0, 0)
-                case 3:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONSUME', False, WHITE, True, 0, 0)
-                case 4:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'BUY', False, WHITE, True, 0, 0)
-                case 5:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[3], 'LOSE YOURSELF', False, WHITE, True, 0, 200)
-                case 6:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
+            if rand == 1:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'OBEY', False, WHITE, True, 0, 0)
+            if rand == 2:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONFORM', False, WHITE, True, 0, 0)
+            if rand == 3:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONSUME', False, WHITE, True, 0, 0)
+            if rand == 4:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'BUY', False, WHITE, True, 0, 0)
+            if rand == 5:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[3], 'LOSE YOURSELF', False, WHITE, True, 0, 200)
+            if rand == 6:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
     
     elif game_mode:
         if counter % 10 == 0:
@@ -453,19 +452,18 @@ while not done:
         set_game_border((random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), WID, HEI, random.randint(5, 15))
         if counter % 100 == 0:
             rand = random.randint(1, 6)
-            match rand:
-                case 1:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'OBEY', False, WHITE, True, 0, 0)
-                case 2:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONFORM', False, WHITE, True, 0, 0)
-                case 3:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONSUME', False, WHITE, True, 0, 0)
-                case 4:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'BUY', False, WHITE, True, 0, 0)
-                case 5:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[3], 'LOSE YOURSELF', False, WHITE, True, 0, 200)
-                case 6:
-                    font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
+            if rand == 1:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'OBEY', False, WHITE, True, 0, 0)
+            if rand == 2:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONFORM', False, WHITE, True, 0, 0)
+            if rand == 3:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'CONSUME', False, WHITE, True, 0, 0)
+            if rand == 4:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'BUY', False, WHITE, True, 0, 0)
+            if rand == 5:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[3], 'LOSE YOURSELF', False, WHITE, True, 0, 200)
+            if rand == 6:
+                font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
         
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[2], str(score), False, RED, False, 17, 10)
         if lives == 3:
