@@ -10,6 +10,7 @@ import pygame
 from pygame import mixer
 import random
 from pygame.constants import K_0
+import json
 
 # Here import the buttons that you want from pygame
 from pygame.locals import (
@@ -47,7 +48,7 @@ HEI = 600
 
 # Width and Height of the screen are initialized
 size = (WID, HEI)
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 
 # Display Game Title
 pygame.display.set_caption(GAME_TITLE)
@@ -60,6 +61,15 @@ SIZES = [int(MAX_SIZE*0.2), int(MAX_SIZE*0.4), int(MAX_SIZE*0.6), int(MAX_SIZE*0
 clock = pygame.time.Clock()
 # ------------------------------------------------- ESSENTIALS ------------------------------------------------------- 
 # ------------------------------------------------- USEFUL -----------------------------------------------------------
+# Data to be stored in JSON file. Needed for saving game states, loading information, etc
+saved_data = {'HIGHSCORE' : 0, 'WARNING_SEEN' : False, 'GOTO_MENU': False, 'MENU_SOUND': False}
+
+try:
+    with open('Data\\data.txt') as data_file:
+        saved_data = json.load(data_file)
+except:
+    pass
+
 # Define variables for game logic here 
 PLAYER_W = 60
 PLAYER_H = 40
@@ -68,11 +78,17 @@ player_y = HEI-PLAYER_H
 circ_r = random.randint(0, 1000)
 circ_t = random.randint(0, 1000)
 player_v = 6
-is_menu = False
+is_menu = saved_data['GOTO_MENU']
 shotUp = False
 shootDelay = False
 is_warning = True
 obey_mode = False
+game_mode = False
+score = 0
+lives = 3
+point_for_enemy_1 = 10
+point_for_enemy_2 = 5
+point_for_enemy_3 = 50
 
 # The Sound Function, which plays all sounds in game. Call this to play sounds or music. Returns 0 on success for playing music, and a Sound if playing sounds.
 def sound_master(soundFilePath, isMusic, onLoop):
@@ -125,8 +141,14 @@ class Player:
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
         
-    def update(self, x, y):
-        self.rect.center = (x, y)
+    def update(self, x, y, collided):
+        global lives
+        self.x = x
+        self.y = y
+        if collided:
+            throwaway = sound_master('Data\\hit.wav', False, False)
+            lives -= 1
+        self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
 
 class Bullet:
@@ -146,7 +168,7 @@ class Bullet:
         global shootDelay
         if collided:
             shootDelay = False
-            self.x = -100
+            self.x = -9999
             self.y = -10
         elif shot and not delay:
             throwaway = sound_master('Data\\shoot.wav', False, False)
@@ -185,12 +207,15 @@ class Enemy:
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
 
-    def collision(self, bullet):
-        if abs(bullet.x - self.x) < (self.width-10) and abs(bullet.y - self.y) < (self.height-10):
+    def collision(self, obj, is_bullet):
+        global score
+        if abs(obj.x - self.x) < (self.width-10) and abs(obj.y - self.y) < (self.height-10):
             self.x = -50
             self.y = random.randint(0, HEI//2)
             self.place_to_go_x = random.randint(PLAYER_W, WID-PLAYER_W)
-            throwaway = sound_master('Data\\dead.wav', False, False)
+            if is_bullet:
+                throwaway = sound_master('Data\\dead.wav', False, False)
+                score += point_for_enemy_1
             return True
         return False
 
@@ -215,11 +240,14 @@ class EnemyTwo:
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
 
-    def collision(self, bullet):
-        if abs(bullet.x - self.x) < (self.width-10) and abs(bullet.y - self.y) < (self.height-10):
+    def collision(self, obj, is_bullet):
+        global score
+        if abs(obj.x - self.x) < (self.width-10) and abs(obj.y - self.y) < (self.height-10):
             self.y = -10
             self.x = random.randint(PLAYER_W, WID-PLAYER_W)
-            throwaway = sound_master('Data\\dead.wav', False, False)
+            if is_bullet:
+                throwaway = sound_master('Data\\dead.wav', False, False)
+                score += point_for_enemy_2
             return True
         return False
 
@@ -247,11 +275,14 @@ class EnemyThree:
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
 
-    def collision(self, bullet):
-        if abs(bullet.x - self.x) < self.width and abs(bullet.y - self.y) < self.height:
+    def collision(self, obj, is_bullet):
+        global score
+        if abs(obj.x - self.x) < self.width and abs(obj.y - self.y) < self.height:
             self.y += self.vel*10
             self.x = random.randint(-8000, -10)
-            throwaway = sound_master('Data\\red_kill.wav', False, False)
+            if is_bullet:
+                throwaway = sound_master('Data\\red_kill.wav', False, False)
+                score += point_for_enemy_3
             return True
         return False
 
@@ -280,32 +311,39 @@ e5 = Enemy(-50, 75, 6)
 e55 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 6)
 e6 = Enemy(-50, 75, 9)
 e66 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 9)
-bull = Bullet(-100, player_y, 10, 10, 10)
+bull = Bullet(-9999, player_y, 10, 10, 10)
 middleCirc = Circle(WID//2, HEI//2)
 # ------------------------------------------------- USEFUL -----------------------------------------------------------
 # ------------------------------------------------- GAME LOGIC & EVERYTHING ------------------------------------------
 counter = 0
 done = False
 menu_sound = 0
+if saved_data['MENU_SOUND']:
+    menu_sound = sound_master('Data\\menu.wav', False, True)
 while not done:
     # Main event loop
     for event in pygame.event.get():
         if event.type == QUIT:
+            with open('Data\\data.txt', 'w') as data_file:
+                json.dump(saved_data, data_file)
             done = True
  
     # Player Inputs
     keys = pygame.key.get_pressed()
-    if keys[K_LEFT] and player_x > PLAYER_W:
+    if keys[K_LEFT] and player_x > PLAYER_W and game_mode:
         player_x -= player_v
-    if keys[K_RIGHT] and player_x < (WID-PLAYER_W):
+    if keys[K_RIGHT] and player_x < (WID-PLAYER_W) and game_mode:
         player_x += player_v
-    if keys[K_SPACE]:
+    if keys[K_SPACE] and game_mode:
         shotUp = True
     if keys[K_RETURN] and is_menu:
         is_menu = False
+        game_mode = True
         mixer.Sound.stop(menu_sound)
         throwaway = sound_master('Data\\game_ost.wav', True, True)
     if keys[K_ESCAPE]:
+        with open('Data\\data.txt', 'w') as data_file:
+                json.dump(saved_data, data_file)
         done = True
     if keys[K_0] and is_menu:
         obey_mode = True
@@ -317,7 +355,7 @@ while not done:
     screen.fill(BLACK)
  
     # Drawing code should go here
-    if is_warning:
+    if is_warning and not saved_data['WARNING_SEEN']:
         max_time = 999
         if counter < max_time:
             font_master('Data\\ARCADECLASSIC.TTF', SIZES[2], 'Polybius has been ', False, WHITE, False, 20, 0)
@@ -330,12 +368,18 @@ while not done:
             font_master('Data\\ARCADECLASSIC.TTF', SIZES[2], 'Game     starts      in     ' + str((max_time-counter)//100 + 1), False, WHITE, False, 20, 500)
         else:
             menu_sound = sound_master('Data\\menu.wav', False, True)
+            saved_data['MENU_SOUND'] = True
             is_warning = False
             is_menu = True
+            saved_data['WARNING_SEEN'] = True
+            saved_data['GOTO_MENU'] = True
     elif is_menu:
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[4]+20, 'P O  LY B I U S', False, (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), True, 0, 160)
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], '1981   Sinnesloschen    Inc', False, BLUE, True, 0, 350)
-        font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], 'HIGHSCORE   0', False, RED, True, 0, 300)
+        font = pygame.font.Font('Data\\ARCADECLASSIC.TTF', SIZES[1])
+        text = font.render('HIGHSCORE   ' + str(saved_data['HIGHSCORE']), False, RED)
+        textRect = text.get_rect()
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], 'HIGHSCORE   ' + str(saved_data['HIGHSCORE']), False, RED, False, (WID//2)-(textRect.width//2), 490)
         set_game_border((random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), WID, HEI, random.randint(5, 15))
     elif obey_mode:
         if counter % 10 == 0:
@@ -374,12 +418,11 @@ while not done:
                 case 6:
                     font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
     
-    else:
+    elif game_mode:
         if counter % 10 == 0:
             circ_r = random.randint(0, 1000)
             circ_t = random.randint(0, 1000)
         middleCirc.update(circ_r, circ_t, (random.randint(0, 100),random.randint(0, 100),random.randint(0, 100)))
-        p.update(player_x, player_y)
         e1.update()
         e2.update()
         e3.update()
@@ -395,10 +438,15 @@ while not done:
         e55.update()
         e6.update()
         e66.update()
-        collidedAny = e1.collision(bull) or e11.collision(bull) or e111.collision(bull) or e4.collision(bull) or e5.collision(bull) or e6.collision(bull)
-        collidedAny = collidedAny or e2.collision(bull) or e22.collision(bull) or e222.collision(bull) or e44.collision(bull) or e55.collision(bull) or e66.collision(bull)
-        collidedAny = collidedAny or e3.collision(bull) or e33.collision(bull) or e333.collision(bull)
+        collidedAny = e1.collision(bull, True) or e11.collision(bull, True) or e111.collision(bull, True) or e4.collision(bull, True) or e5.collision(bull, True) or e6.collision(bull, True)
+        collidedAny = collidedAny or e2.collision(bull, True) or e22.collision(bull, True) or e222.collision(bull, True) or e44.collision(bull, True) or e55.collision(bull, True) or e66.collision(bull, True)
+        collidedAny = collidedAny or e3.collision(bull, True) or e33.collision(bull, True) or e333.collision(bull, True)
         bull.update(player_x, player_y, shotUp, shootDelay, collidedAny)
+        
+        collidedAny = e1.collision(p, False) or e11.collision(p, False) or e111.collision(p, False) or e4.collision(p, False) or e5.collision(p, False) or e6.collision(p, False)
+        collidedAny = collidedAny or e2.collision(p, False) or e22.collision(p, False) or e222.collision(p, False) or e44.collision(p, False) or e55.collision(p, False) or e66.collision(p, False)
+        collidedAny = collidedAny or e3.collision(p, False) or e33.collision(p, False) or e333.collision(p, False)
+        p.update(player_x, player_y, collidedAny)
         if shotUp:
             shotUp = False
             shootDelay = True
@@ -418,7 +466,45 @@ while not done:
                     font_master('Data\\ARCADECLASSIC.TTF', SIZES[3], 'LOSE YOURSELF', False, WHITE, True, 0, 200)
                 case 6:
                     font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
-    
+        
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[2], str(score), False, RED, False, 17, 10)
+        if lives == 3:
+            image = pygame.image.load('Data\\live.png').convert_alpha()
+            rect = image.get_rect()
+            rect.topright = (WID-15, 10)
+            screen.blit(image, rect)
+            image = pygame.image.load('Data\\live.png').convert_alpha()
+            rect = image.get_rect()
+            rect.topright = (WID-75, 10)
+            screen.blit(image, rect)
+            image = pygame.image.load('Data\\live.png').convert_alpha()
+            rect = image.get_rect()
+            rect.topright = (WID-135, 10)
+            screen.blit(image, rect)
+        elif lives == 2:
+            image = pygame.image.load('Data\\live.png').convert_alpha()
+            rect = image.get_rect()
+            rect.topright = (WID-15, 10)
+            screen.blit(image, rect)
+            image = pygame.image.load('Data\\live.png').convert_alpha()
+            rect = image.get_rect()
+            rect.topright = (WID-75, 10)
+            screen.blit(image, rect)
+        elif lives == 1:
+            image = pygame.image.load('Data\\live.png').convert_alpha()
+            rect = image.get_rect()
+            rect.topright = (WID-15, 10)
+            screen.blit(image, rect)
+        elif lives == 0:
+            game_mode = False
+    else:
+        mixer.music.stop()
+        if saved_data['HIGHSCORE'] < score:
+            saved_data['HIGHSCORE'] = score
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'GAME OVER', False, GREEN, True, 0, 85)
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], str(score), False, GREEN, True, 0, 125)
+        set_game_border(GREEN, WID, HEI, 15)
+            
     # This counter will help us manipulate the frames better
     counter += 1
     
