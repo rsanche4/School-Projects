@@ -8,9 +8,9 @@ public class example {
    static final String DB_URL = "jdbc:mysql://localhost/test";
 
    //  Database credentials
-   static final String USER = "Raf";
+   static final String USER = "";
    //the user name; You can change it to your username (by default it is root).
-   static final String PASS = "mysql32190g@#$";
+   static final String PASS = "";
    //the password; You can change it to your password (the one you used in MySQL server configuration).
 
    public static void main(String[] args) {
