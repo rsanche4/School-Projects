@@ -9,13 +9,11 @@
 import pygame
 from pygame import mixer
 import random
-from pygame.constants import K_e
 
 # Here import the buttons that you want from pygame
 from pygame.locals import (
     K_LEFT,
     K_RIGHT,
-    K_SPACE,
     K_RETURN,
     K_ESCAPE,
     QUIT,
