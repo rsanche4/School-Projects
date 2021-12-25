@@ -39,9 +39,21 @@
    CONTROLS:
    Left Arrow -> Move Left
    Right Arrow -> Move Right
-   Space -> Shoot
    Enter -> Start game
-   0 -> Start obey mode
    Esc -> Quit game
+   
+****************************************
+
+   RULES:
+   The balls with numbers should be
+   collected to decrease the green
+   score on top. If the score reaches
+   zero, you get 10 points and move up
+   to the next level.
+   White balls decrease your life 
+   points. If you collect a number
+   bigger than the green score, you
+   will lose life points, so collect
+   the right numbers!
    
 ****************************************
