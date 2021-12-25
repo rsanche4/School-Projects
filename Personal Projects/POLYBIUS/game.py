@@ -16,7 +16,10 @@ import json
 from pygame.locals import (
     K_LEFT,
     K_RIGHT,
+    K_UP,
+    K_DOWN,
     K_0,
+    K_1,
     K_SPACE,
     K_RETURN,
     K_ESCAPE,
@@ -32,7 +35,7 @@ pygame.font.init()
 mixer.init()
 
 # Change game Icon for window
-programIcon = pygame.image.load('Data\\ikon.png')
+programIcon = pygame.image.load('Data\\player1.png')
 pygame.display.set_icon(programIcon)
 
 # Define some playtesting colors
@@ -71,8 +74,8 @@ except:
     pass
 
 # Define variables for game logic here 
-PLAYER_W = 60
-PLAYER_H = 40
+PLAYER_W = 0
+PLAYER_H = 0
 player_x = WID//2
 player_y = HEI-PLAYER_H
 circ_r = random.randint(0, 1000)
@@ -130,14 +133,16 @@ def set_game_border(color, width, height, thickness):
 
 # Objects, Classes, Players, Enemies, everything of that sort
 class Player:
-    def __init__(self, x, y, w, h):
-        self.width = w
-        self.height = h
+    def __init__(self, x, y):
+        global PLAYER_H
+        global PLAYER_W 
         self.x = x
         self.y = y
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Data\\player1.png').convert_alpha()
         self.rect = self.image.get_rect()
+        PLAYER_W = self.rect.width
+        PLAYER_H = self.rect.height
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
         
@@ -182,10 +187,11 @@ class Bullet:
         screen.blit(self.image, self.rect)
 
 class Enemy:
-    def __init__(self, x, y, vel):
+    def __init__(self, x, y, vel, is_right):
         self.vel = vel
         self.x = x
         self.y = y
+        self.is_right = is_right
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Data\\alien.png').convert_alpha()
         self.rect = self.image.get_rect()
@@ -196,13 +202,16 @@ class Enemy:
         self.place_to_go_x = random.randint(PLAYER_W, WID-PLAYER_W)
         
     def update(self):
-        if not self.x >= self.place_to_go_x:
+        if (not self.x >= self.place_to_go_x and not self.is_right) or (not self.x <= self.place_to_go_x and self.is_right):
             self.x += self.vel
         else:
-            self.y += self.vel
+            self.y += abs(self.vel)
         if self.y > HEI+10:
-            self.x = -50
-            self.y = random.randint(0, HEI//2)
+            if self.is_right:
+                self.x = WID+50
+            else:
+                self.x = -50
+            self.y = random.randint(0, HEI)
             self.place_to_go_x = random.randint(PLAYER_W, WID-PLAYER_W)
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
@@ -210,8 +219,11 @@ class Enemy:
     def collision(self, obj, is_bullet):
         global score
         if abs(obj.x - self.x) < (self.width-10) and abs(obj.y - self.y) < (self.height-10):
-            self.x = -50
-            self.y = random.randint(0, HEI//2)
+            if self.is_right:
+                self.x = WID+50
+            else:
+                self.x = -50
+            self.y = random.randint(0, HEI)
             self.place_to_go_x = random.randint(PLAYER_W, WID-PLAYER_W)
             if is_bullet:
                 throwaway = sound_master('Data\\dead.wav', False, False)
@@ -295,21 +307,21 @@ class Circle:
         pygame.draw.circle(screen, rgb, (self.x, self.y), r, t)
 
 # Initialize other varibles, classes (Optional)
-p = Player(player_x, player_y, PLAYER_W, PLAYER_H)
-e1 = Enemy(-50, 75, 10)
+p = Player(player_x, player_y)
+e1 = Enemy(-50, 75, 10, False)
 e2 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 10)
 e3 = EnemyThree(random.randint(-8000, -10), 50, 10)
-e11 = Enemy(-50, 75, 7)
+e11 = Enemy(-50, 75, 7, False)
 e22 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 7)
 e33 = EnemyThree(random.randint(-8000, -10), 50, 7)
-e111 = Enemy(-50, 75, 5)
+e111 = Enemy(-50, 75, 5, False)
 e222 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 5)
 e333 = EnemyThree(random.randint(-8000, -10), 50, 5)
-e4 = Enemy(-50, 75, 8)
+e4 = Enemy(WID+50, 75, -8, True)
 e44 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 8)
-e5 = Enemy(-50, 75, 6)
+e5 = Enemy(WID+50, 75, -6, True)
 e55 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 6)
-e6 = Enemy(-50, 75, 9)
+e6 = Enemy(WID+50, 75, -9, True)
 e66 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 9)
 bull = Bullet(-9999, player_y, 10, 10, 10)
 middleCirc = Circle(WID//2, HEI//2)
@@ -334,9 +346,35 @@ while not done:
         player_x -= player_v
     if keys[K_RIGHT] and player_x < (WID-PLAYER_W) and game_mode:
         player_x += player_v
+    if keys[K_UP] and player_y > PLAYER_H and game_mode:
+        player_y -= player_v
+    if keys[K_DOWN] and player_y < (HEI-PLAYER_H) and game_mode:
+        player_y += player_v
     if keys[K_SPACE] and game_mode:
         shotUp = True
     if keys[K_RETURN] and is_menu:
+        lives = 3
+        score = 0
+        player_x = WID//2
+        player_y = HEI-PLAYER_H
+        p = Player(player_x, player_y)
+        e1 = Enemy(-50, 75, 10, False)
+        e2 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 10)
+        e3 = EnemyThree(random.randint(-8000, -10), 50, 10)
+        e11 = Enemy(-50, 75, 7, False)
+        e22 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 7)
+        e33 = EnemyThree(random.randint(-8000, -10), 50, 7)
+        e111 = Enemy(-50, 75, 5, False)
+        e222 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 5)
+        e333 = EnemyThree(random.randint(-8000, -10), 50, 5)
+        e4 = Enemy(WID+50, 75, -8, True)
+        e44 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 8)
+        e5 = Enemy(WID+50, 75, -6, True)
+        e55 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 6)
+        e6 = Enemy(WID+50, 75, -9, True)
+        e66 = EnemyTwo(random.randint(PLAYER_W, WID-PLAYER_W), -10, 9)
+        bull = Bullet(-9999, player_y, 10, 10, 10)
+        middleCirc = Circle(WID//2, HEI//2)
         is_menu = False
         game_mode = True
         mixer.Sound.stop(menu_sound)
@@ -345,6 +383,12 @@ while not done:
         with open('Data\\data.txt', 'w') as data_file:
                 json.dump(saved_data, data_file)
         done = True
+    if keys[K_1] and not game_mode and not is_menu:
+        is_menu = True
+        game_mode = False
+        obey_mode = False
+        mixer.music.stop()
+        menu_sound = sound_master('Data\\menu.wav', False, True)
     if keys[K_0] and is_menu:
         obey_mode = True
         is_menu = False
@@ -374,16 +418,18 @@ while not done:
             saved_data['WARNING_SEEN'] = True
             saved_data['GOTO_MENU'] = True
     elif is_menu:
-        font_master('Data\\ARCADECLASSIC.TTF', SIZES[4]+20, 'P O  LY B I U S', False, (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), True, 0, 160)
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[4]+20, 'P O  LY B I U S', False, (random.randint(0,160),255,random.randint(0,160)), True, 0, 160)
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], '1981   Sinnesloschen    Inc', False, BLUE, True, 0, 350)
         font = pygame.font.Font('Data\\ARCADECLASSIC.TTF', SIZES[1])
         text = font.render('HIGHSCORE   ' + str(saved_data['HIGHSCORE']), False, RED)
         textRect = text.get_rect()
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[1], 'HIGHSCORE   ' + str(saved_data['HIGHSCORE']), False, RED, False, (WID//2)-(textRect.width//2), 490)
-        set_game_border((random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), WID, HEI, random.randint(5, 15))
+        #set_game_border((random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)), WID, HEI, random.randint(5, 15))
     elif obey_mode:
-        if counter % 10 == 0:
-            circ_r = random.randint(0, 1000)
+        if counter % 100 != 0:
+            circ_r += 5 
+        else:
+            circ_r = 1
             circ_t = random.randint(0, 1000)
         middleCirc.update(circ_r, circ_t, (random.randint(0, 100),random.randint(0, 100),random.randint(0, 100)))
         e1.update()
@@ -418,8 +464,10 @@ while not done:
                 font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'SUBMIT', False, WHITE, True, 0, 0)
     
     elif game_mode:
-        if counter % 10 == 0:
-            circ_r = random.randint(0, 1000)
+        if counter % 100 != 0:
+            circ_r += 5 
+        else:
+            circ_r = 1
             circ_t = random.randint(0, 1000)
         middleCirc.update(circ_r, circ_t, (random.randint(0, 100),random.randint(0, 100),random.randint(0, 100)))
         e1.update()
@@ -500,8 +548,9 @@ while not done:
         if saved_data['HIGHSCORE'] < score:
             saved_data['HIGHSCORE'] = score
         font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], 'GAME OVER', False, GREEN, True, 0, 85)
-        font_master('Data\\ARCADECLASSIC.TTF', SIZES[4], str(score), False, GREEN, True, 0, 125)
-        set_game_border(GREEN, WID, HEI, 15)
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[2], 'PRESS 1 TO RETURN', False, GREEN, True, 0, 250)
+        font_master('Data\\ARCADECLASSIC.TTF', SIZES[2], str(score), False, GREEN, False, WID//2-50, HEI//2+75)
+        #set_game_border((random.randint(0,255),random.randint(0,255),random.randint(0,255)), WID, HEI, 15)
             
     # This counter will help us manipulate the frames better
     counter += 1

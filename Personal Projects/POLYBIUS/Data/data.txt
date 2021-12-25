@@ -1,0 +1,1 @@
+{"HIGHSCORE": 125, "WARNING_SEEN": true, "GOTO_MENU": true, "MENU_SOUND": true}
