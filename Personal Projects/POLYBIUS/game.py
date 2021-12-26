@@ -425,8 +425,8 @@ while not done:
         screen.blit(image, rect)
         
         p.update(direction)
-        if counter % 150 < 100:
-            if counter % 150 == 0:
+        if counter % 100 < 50:
+            if counter % 100 == 0:
                 temp = rand
                 if temp == 10:
                     rand = random.randint(1, 9)
@@ -435,8 +435,8 @@ while not done:
                 else:
                     a = [random.randint(1, temp-1),random.randint(temp+1, 10)]
                     rand = a[random.randint(0, 1)]
+                en_vel = 5
                 rloc = random.randint(0, 7)
-                en_vel = random.randint(3, 5)
             for i in range(1, len(en_arr)):
                 if i == rand:
                     en_arr[rand].update(rloc, False, en_vel)
