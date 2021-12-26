@@ -78,6 +78,9 @@ PLAYER_H = 0
 rand = 5
 rloc = -1
 en_vel = 0
+init_timeout = True
+timeout = 4000
+cur_time = 0
 
 # The Sound Function, which plays all sounds in game. Call this to play sounds or music. Returns 0 on success for playing music, and a Sound if playing sounds.
 def sound_master(soundFilePath, isMusic, onLoop):
@@ -182,7 +185,6 @@ def level_aesth(level, counter, middleCirc):
         color = (random.randint(80,110),0,0)
     middleCirc.update(circ_r, circ_t, color)
 
-
 def messages(counter, rand):
     if counter % 100 == 0:
         if rand == 1:
@@ -269,7 +271,6 @@ class Enemy:
         global level
         global score
         global numbers
-        global MAX_LIF
         if make_inv:
             self.image = pygame.image.load('Data\\empty.png').convert_alpha()
         else:
@@ -286,7 +287,6 @@ class Enemy:
         self.rect = self.image.get_rect()
         self.width = self.rect.width
         self.height = self.rect.height
-
         if direction == -1:
             self.x = WID//2
             self.y = HEI//2
@@ -313,8 +313,7 @@ class Enemy:
             self.y = HEI//2
         elif direction == 7:
             self.x += vel
-            self.y -= vel
-        
+            self.y -= vel        
         if abs(player_x - self.x) < self.width and abs(player_y - self.y) < self.height:
             self.x = -1000
             self.y = -1000
@@ -334,9 +333,7 @@ class Enemy:
                     level = random.randint(0, 7)
                     throwaway1 = sound_master('Data\\level_up.mp3', False, False)
                 else:
-                    throwaway = sound_master('Data\\scoreplus.mp3', False, False)
-
-            
+                    throwaway = sound_master('Data\\scoreplus.mp3', False, False)            
         self.rect.center = (self.x, self.y)
         screen.blit(self.image, self.rect)
 
@@ -391,39 +388,38 @@ while not done:
             en_vel = 0
             throwaway = sound_master('Data\\game_ost.mp3', True, True)
             throwaway1 = sound_master('Data\\coins.mp3', False, False)
-        if keys[K_ESCAPE] and is_menu:
-            done = True
-        elif keys[K_ESCAPE] and not is_menu:
+        elif keys[K_RETURN] and not is_menu and not game_mode:
             mixer.music.stop()
             level = 0
             is_menu = True
             game_mode = False
+        if keys[K_ESCAPE] and is_menu:
+            done = True
+        
     
     # Screen-clearing code goes here. Don't put other drawing commands above this, or they will be erased with this command.
     if level == 6:
         screen.fill((random.randint(0,50),random.randint(0,50),random.randint(0,50)))    
     else:
-        screen.fill(BLACK)
- 
+        screen.fill((0,0,20))
+
     # Drawing code should go here
     if is_menu:
         image = pygame.image.load('Data\\title3.png').convert_alpha()
         rect = image.get_rect()
         rect.center = (WID//2, 170)
         screen.blit(image, rect)
-        font_master(F, SIZES[1], '@ 1981 Sinneslöschen Inc.', False, BLUE, True, 0, 290)
+        font_master(F, SIZES[1], '(c) 1981 Sinneslöschen Inc.', False, BLUE, True, 0, 290)
         font = pygame.font.Font(F, SIZES[1])
         text = font.render('Credits 1', False, RED)
         textRect = text.get_rect()
-        font_master(F, SIZES[1], 'Credits 1', False, RED, False, (WID//2)-(textRect.width//2), 490)
+        font_master(F, SIZES[1], 'Credits 0', False, RED, False, (WID//2)-(textRect.width//2), 490)
     elif game_mode:
-        level_aesth(level, counter, middleCirc)
-        
+        level_aesth(level, counter, middleCirc)        
         image = pygame.image.load(middles[(counter%12)//2]).convert_alpha()
         rect = image.get_rect()
         rect.center = (WID//2, HEI//2)
-        screen.blit(image, rect)
-        
+        screen.blit(image, rect)        
         p.update(direction)
         if counter % 100 < 50:
             if counter % 100 == 0:
@@ -442,10 +438,8 @@ while not done:
                     en_arr[rand].update(rloc, False, en_vel)
                 else:
                     en_arr[i].update(-1, True, en_vel)
-
         if lif <= 0:
             game_mode = False
-
         font_master(F, SIZES[1], str(score), False, RED, False, 15, HEI-45)
         image = pygame.image.load('Data\\live.png').convert_alpha()
         rect = image.get_rect()
@@ -461,7 +455,16 @@ while not done:
         font_master(F, SIZES[4], 'GAME OVER', False, GREEN, True, 0, 55)
         font_master(F, SIZES[2], 'INSERT CREDIT', False, GREEN, True, 0, 300)
         font_master(F, SIZES[2], str(score), False, RED, False, WID//2-10, HEI//2+40)
-            
+        if init_timeout:
+            cur_time = counter
+            init_timeout = False
+        if counter-cur_time >= timeout:
+            level = 0
+            cur_time = 0
+            is_menu = True
+            init_timeout = True
+            game_mode = False
+
     # This counter will help us manipulate the frames better
     counter += 1
     
