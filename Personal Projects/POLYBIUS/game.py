@@ -458,7 +458,7 @@ while not done:
         if init_timeout:
             cur_time = counter
             init_timeout = False
-        if counter-cur_time >= timeout:
+        elif counter-cur_time >= timeout:
             level = 0
             cur_time = 0
             is_menu = True
